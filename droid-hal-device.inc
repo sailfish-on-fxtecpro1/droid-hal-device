@@ -531,6 +531,7 @@ sed -i -e '/^[[:space:]]*mkdir[[:space:]]\/tmp[[:space:]]*/s/^/# Removed during 
 
 if [ $ANDROID_VERSION_MAJOR -ge "7" ]; then
 mkdir -p $RPM_BUILD_ROOT%{_libexecdir}/droid-hybris/system/etc/init
+mkdir $RPM_BUILD_ROOT%{_libexecdir}/droid-hybris/vendor/
 cp -a %{android_root}/out/target/product/%{device}/system/etc/init/servicemanager.rc $RPM_BUILD_ROOT%{_libexecdir}/droid-hybris/system/etc/init/
 echo "%{_libexecdir}/droid-hybris/system/etc/init/servicemanager.rc" > tmp/droid-hal.files
 else
@@ -543,8 +544,10 @@ echo "%{_libexecdir}/droid-hybris/system/etc/init/hybris_extras.rc" >> tmp/droid
 fi
 
 cp -a %{android_root}/out/target/product/%{device}/system/{bin,lib} $RPM_BUILD_ROOT%{_libexecdir}/droid-hybris/system/.
+cp -a %{android_root}/out/target/product/%{device}/vendor/lib $RPM_BUILD_ROOT%{_libexecdir}/droid-hybris/vendor/.
 %if 0%{?droid_target_aarch64:1}
-cp -a %{android_root}/out/target/product/%{device}/system/lib64 $RPM_BUILD_ROOT%{_libexecdir}/droid-hybris/system/.
+cp -ar %{android_root}/out/target/product/%{device}/system/lib64 $RPM_BUILD_ROOT%{_libexecdir}/droid-hybris/system/.
+cp -ar %{android_root}/out/target/product/%{device}/vendor/lib64 $RPM_BUILD_ROOT%{_libexecdir}/droid-hybris/vendor/.
 %endif
 # Remove kernel modules if installed under /system/lib/modules
 rm -rf $RPM_BUILD_ROOT%{_libexecdir}/droid-hybris/system/lib/modules
@@ -889,11 +892,13 @@ done
 %{_unitdir}
 # hybris and /dev/alog/ libraries
 %{_libexecdir}/droid-hybris/system/lib/
+%{_libexecdir}/droid-hybris/vendor/lib/
 # just /dev/alog/ libraries (for trying to run pure android apps)
 %{_libexecdir}/droid-hybris/lib-dev-alog/.
 # all of the above for 64bits
 %if 0%{?droid_target_aarch64:1}
 %{_libexecdir}/droid-hybris/system/lib64/
+%{_libexecdir}/droid-hybris/vendor/lib64/
 %{_libexecdir}/droid-hybris/lib64-dev-alog/.
 %endif
 /lib/udev/rules.d/*
